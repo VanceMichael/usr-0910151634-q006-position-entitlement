@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS organizations (id TEXT PRIMARY KEY, daily_quota BIGINT NOT NULL CHECK (daily_quota >= 0));
+CREATE TABLE IF NOT EXISTS consumption_events (id BIGSERIAL PRIMARY KEY, organization_id TEXT NOT NULL REFERENCES organizations(id), idempotency_key TEXT NOT NULL UNIQUE, nonce TEXT NOT NULL, units BIGINT NOT NULL CHECK (units > 0), created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE (organization_id, nonce));
