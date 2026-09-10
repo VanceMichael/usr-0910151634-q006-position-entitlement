@@ -1,4 +1,6 @@
 .env
+.env.local
+.env.*.local
 *.key
 *.pem
 node_modules/

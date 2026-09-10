@@ -1,0 +1,1 @@
+{"requests":[{"idempotency_key":"idem-1","key_id":"demo-key-a","timestamp":"2026-09-05T00:00:00Z","nonce":"nonce-001","resource_scope":"correction/basic","units":5}]}

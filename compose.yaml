@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ledger
+      POSTGRES_PASSWORD: ledger
+      POSTGRES_DB: entitlements
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledger -d entitlements"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+    volumes:
+      - entitlement-data:/var/lib/postgresql/data
+volumes:
+  entitlement-data:

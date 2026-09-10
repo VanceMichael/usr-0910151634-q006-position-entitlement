@@ -1,0 +1,1 @@
+{"type":"object","required":["idempotency_key","key_id","timestamp","nonce","resource_scope","units"],"properties":{"idempotency_key":{"type":"string"},"key_id":{"type":"string"},"timestamp":{"type":"string","format":"date-time"},"nonce":{"type":"string"},"resource_scope":{"type":"string"},"units":{"type":"integer","minimum":1}}}
