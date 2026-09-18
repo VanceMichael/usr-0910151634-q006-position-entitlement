@@ -1,11 +1,4 @@
 services:
-  app:
-    build: .
-    environment:
-      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
-    depends_on:
-      postgres:
-        condition: service_healthy
   postgres:
     image: postgres:16-alpine
     environment:
@@ -16,8 +9,67 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ledger -d entitlements"]
       interval: 2s
       timeout: 2s
-      retries: 15
+      retries: 20
     volumes:
       - entitlement-data:/var/lib/postgresql/data
+    ports:
+      - "55432:5432"
+
+  migrate:
+    build: .
+    command: ["migrate"]
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+      SEED_DATA: "1"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    build: .
+    command: ["serve"]
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+      SEED_DATA: "1"
+      PORT: "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        - "CMD"
+        - "python"
+        - "-c"
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3).status == 200 else 1)"
+      interval: 3s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+    restart: unless-stopped
+
+  # 容器集成测试（docker compose --profile test run --rm tests）。
+  # 由 scripts/compose-test.sh 编排：竞争请求 → 重启 PostgreSQL → 游标续读。
+  tests:
+    profiles: ["test"]
+    build: .
+    command: ["test"]
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+      STATE_DIR: /state
+    volumes:
+      - test-state:/state
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
 volumes:
   entitlement-data:
+  test-state:

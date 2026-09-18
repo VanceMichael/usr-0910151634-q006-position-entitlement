@@ -1,4 +1,11 @@
 [project]
 name = "position-entitlement-ledger"
 version = "0.1.0"
+description = "定位数据授权用量结算：签名鉴权、范围授权、UTC 账期额度扣减与只追加审计"
 requires-python = ">=3.12"
+dependencies = [
+    "pg8000==1.31.5",
+]
+
+[tool.setuptools]
+packages = ["src"]

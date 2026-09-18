@@ -1,1 +1,29 @@
-{"requests":[{"idempotency_key":"idem-1","key_id":"demo-key-a","timestamp":"2026-09-05T00:00:00Z","nonce":"nonce-001","resource_scope":"correction/basic","units":5}]}
+{
+  "requests": [
+    {
+      "idempotency_key": "idem-demo-001",
+      "key_id": "demo-key-a",
+      "timestamp": "2026-09-18T00:00:00Z",
+      "nonce": "nonce-demo-001",
+      "resource_scope": "correction/basic",
+      "units": 5
+    },
+    {
+      "idempotency_key": "idem-demo-002",
+      "key_id": "demo-key-a",
+      "timestamp": "2026-09-18T00:05:00Z",
+      "nonce": "nonce-demo-002",
+      "resource_scope": "correction/premium",
+      "units": 20
+    },
+    {
+      "idempotency_key": "idem-demo-003",
+      "key_id": "demo-key-b",
+      "timestamp": "2026-09-18T00:10:00Z",
+      "nonce": "nonce-demo-003",
+      "resource_scope": "correction/basic",
+      "units": 2
+    }
+  ],
+  "note": "仅为契约示例。实际请求还需 X-Key-Id 与 X-Signature(HMAC-SHA256) 头，时间戳必须落在 contracts.clock_skew_seconds 允许的偏差内。"
+}
