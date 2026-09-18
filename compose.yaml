@@ -1,11 +1,4 @@
 services:
-  app:
-    build: .
-    environment:
-      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
-    depends_on:
-      postgres:
-        condition: service_healthy
   postgres:
     image: postgres:16-alpine
     environment:
@@ -19,5 +12,48 @@ services:
       retries: 15
     volumes:
       - entitlement-data:/var/lib/postgresql/data
+
+  migrate:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["python", "-m", "src.migrate"]
+    restart: "no"
+
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+      OPERATOR_TOKEN: operator-local-token
+      HOST: 0.0.0.0
+      PORT: "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+
+  # 容器端到端测试运行器：docker compose run --rm test python tests/container_scenario.py fire|verify
+  # 或直接 scripts/container_test.sh（含 PostgreSQL 重启）。
+  test:
+    build: .
+    profiles: ["test"]
+    environment:
+      DATABASE_URL: postgresql://ledger:ledger@postgres:5432/entitlements
+      LEDGER_BASE_URL: http://app:8000
+      OPERATOR_TOKEN: operator-local-token
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - test-state:/state
+    command: ["sleep", "infinity"]
+
 volumes:
   entitlement-data:
+  test-state:

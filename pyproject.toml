@@ -1,4 +1,11 @@
 [project]
 name = "position-entitlement-ledger"
 version = "0.1.0"
+description = "定位数据授权用量结算服务：HMAC 鉴权、防重放、范围授权、UTC 账期额度与只追加审计"
 requires-python = ">=3.12"
+dependencies = [
+    "psycopg[binary]==3.3.6",
+]
+
+[tool.unittest]
+start-dir = "tests"

@@ -1,1 +1,21 @@
-{"requests":[{"idempotency_key":"idem-1","key_id":"demo-key-a","timestamp":"2026-09-05T00:00:00Z","nonce":"nonce-001","resource_scope":"correction/basic","units":5}]}
+{
+  "examples": [
+    {
+      "idempotency_key": "idem-1",
+      "key_id": "demo-key-a",
+      "timestamp": "2026-09-18T00:00:00Z",
+      "nonce": "nonce-001",
+      "resource_scope": "correction/basic",
+      "units": 5
+    },
+    {
+      "idempotency_key": "idem-2",
+      "key_id": "demo-key-a-c",
+      "timestamp": "2026-09-18T00:00:05Z",
+      "nonce": "nonce-002",
+      "resource_scope": "correction/rtk",
+      "units": 15
+    }
+  ],
+  "notes": "请求须另带 X-Signature: HMAC-SHA256(secret, METHOD\\nPATH\\nkey_id\\ntimestamp\\nnonce\\nidempotency_key\\nsha256(canonical body)) 的十六进制摘要。示例密钥仅用于本地契约说明，不可用于其他环境。"
+}
